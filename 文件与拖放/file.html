@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="{CHARSET}">
+		<title>文件与拖放</title>
+		<style>
+			.dropimg{
+				border: 2px solid green;
+				height: 180px;
+				width: 180px;
+			}
+		</style>
+		<script>
+			var file = document.getElementById('file');
+			var result = document.getElementById('result');
+			if (typeof FileReader == 'undefined' ){
+	   			result.innerHTML = "<p>抱歉，你的浏览器不支持 FileReader</p>";
+	   			file.setAttribute( 'disabled','disabled' );
+			}
+			function readAsDataURL(){
+	    		var file = document.getElementById("file").files[0];
+	    		if(!/image\/\w+/.test(file.type)){
+	        	alert("请确保文件为图像类型");
+	        	return false;
+	    		}    
+	    		var reader = new FileReader();
+	    		reader.readAsDataURL(file);
+	    		reader.onload = function(e){
+	       		var img_result=document.getElementById("result");
+	       		img_result.innerHTML = '<img src="'+this.result+'" id="dragimg" ondragstart="drag(event)"/>';
+	    		}
+			}
+			function drag(e){
+				e.dataTransfer.setData("Text",e.target.id);
+			}
+			function allowDrop(e){
+				e.preventDefault();
+			}
+			function drop(e){
+				e.preventDefault();
+				var data = e.dataTransfer.getData("Text");
+    			e.target.appendChild(document.getElementById(data));
+			}
+		</script>
+	</head>
+	<body>
+		请选择一个文件：
+		<input type="file" id="file"/>
+		<input type="button" value="读取图像" onclick="readAsDataURL()" />
+		<div id="result"></div>
+		<div ondragover="allowDrop(event)" ondrop="drop(event)" class="dropimg"></div>
+	</body>
+</html>
